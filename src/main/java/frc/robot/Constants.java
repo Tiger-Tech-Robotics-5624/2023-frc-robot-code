@@ -12,9 +12,22 @@ package frc.robot;
  * <p>It is advised to statically import this class (or one of its inner classes) wherever the
  * constants are needed, to reduce verbosity.
  */
-
 public final class Constants {
-  public static class OperatorConstants {
-    public static final int kDriverControllerPort = 0;
-  }
+//  public static class OperatorConstants {
+//    public static final int kDriverControllerPort = 0;
+//  }
+
+  //XboxController port **Need to verify port id**
+  public static final int xboxPort = 0;
+
+  //Joystick ports **Need to verify port id**
+  public static final int stickPortL = 1;
+  public static final int stickPortR = 2;
+
+  //Wheel ports **Need to verify port id**
+  public static final int CANPortR1 = 0; 
+  public static final int CANPortR2 = 1; 
+  
+  public static final int CANPortL1 = 2; 
+  public static final int CANPortL2 = 3; 
 }
