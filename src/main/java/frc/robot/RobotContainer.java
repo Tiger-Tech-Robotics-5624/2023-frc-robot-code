@@ -5,6 +5,7 @@
 package frc.robot;
 
 import frc.robot.commands.Autos;
+import frc.robot.commands.DriveCommand;
 import frc.robot.subsystems.DriveSubsystem;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -17,12 +18,19 @@ public class RobotContainer {
   public static Joystick stickLeft, stickRight;
 
   DriveSubsystem driveSub;
+  DriveCommand driveCmd;
 
   public RobotContainer() {
     xboxController = new XboxController(Constants.xboxPort);
 
     stickLeft = new Joystick(Constants.stickPortL);
     stickRight = new Joystick(Constants.stickPortR);
+
+    driveSub = new DriveSubsystem();
+
+    driveCmd = new DriveCommand(driveSub);
+
+    driveSub.setDefaultCommand(driveCmd);
   }
 
   private void configureBindings() {

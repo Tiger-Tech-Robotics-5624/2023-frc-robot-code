@@ -25,7 +25,7 @@ public final class Constants {
   public static final int stickPortR = 2;
 
   //Wheel ports **Need to verify port id**
-  public static final int CANPortR1 = 0; 
+  public static final int CANPortR1 = 4; 
   public static final int CANPortR2 = 1; 
   
   public static final int CANPortL1 = 2; 
