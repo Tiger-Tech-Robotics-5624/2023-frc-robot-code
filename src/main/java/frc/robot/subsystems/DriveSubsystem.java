@@ -8,6 +8,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -38,6 +39,8 @@ public class DriveSubsystem extends SubsystemBase {
     if(rightY > 0.03 || rightY < -0.03 || leftY > 0.03 || leftY < -0.03){
       rightGroup.set(rightY * (0.50 - (0.25 * analogRead)) );
       leftGroup.set(-leftY * (0.50 - (0.25 * analogRead)) );
+      SmartDashboard.putNumber("Right Group Speed",rightY * (0.50 - (0.25 * analogRead)));
+      SmartDashboard.putNumber("Left Group Speed",-leftY * (0.50 - (0.25 * analogRead)));
     }
     else{
       stop();
