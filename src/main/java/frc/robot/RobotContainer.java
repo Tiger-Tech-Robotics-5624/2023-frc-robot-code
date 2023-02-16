@@ -6,7 +6,9 @@ package frc.robot;
 
 import frc.robot.commands.Autos;
 import frc.robot.commands.DriveCommand;
+import frc.robot.commands.IntakeCommand;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -18,7 +20,10 @@ public class RobotContainer {
   public static Joystick stickLeft, stickRight;
 
   DriveSubsystem driveSub;
+  IntakeSubsystem intakeSub;
+
   DriveCommand driveCmd;
+  IntakeCommand intakeCmd;
 
   public RobotContainer() {
     xboxController = new XboxController(Constants.xboxPort);
@@ -27,8 +32,10 @@ public class RobotContainer {
     stickRight = new Joystick(Constants.stickPortR);
 
     driveSub = new DriveSubsystem();
+    intakeSub = new IntakeSubsystem();
 
     driveCmd = new DriveCommand(driveSub);
+    intakeCmd = new IntakeCommand(intakeSub);
 
     driveSub.setDefaultCommand(driveCmd);
   }
