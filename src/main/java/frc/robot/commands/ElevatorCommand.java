@@ -5,16 +5,15 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.RobotContainer;
-import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem;
 
-public class IntakeCommand extends CommandBase {
-  IntakeSubsystem intakeSub;
-  /** Creates a new IntakeCommand. */
-  public IntakeCommand(IntakeSubsystem intake) {
+public class ElevatorCommand extends CommandBase {
+  ElevatorSubsystem elevatorSub;
+  /** Creates a new ElevatorCommand. */
+  public ElevatorCommand(ElevatorSubsystem elevator) {
     // Use addRequirements() here to declare subsystem dependencies.
-    intakeSub = intake;
-    addRequirements(intakeSub);
+    elevatorSub = elevator;
+    addRequirements(elevatorSub);
   }
 
   // Called when the command is initially scheduled.
@@ -23,9 +22,7 @@ public class IntakeCommand extends CommandBase {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-    intakeSub.pullPushIntake(RobotContainer.xboxController.getLeftTriggerAxis(),RobotContainer.xboxController.getRightTriggerAxis());
-  }
+  public void execute() {}
 
   // Called once the command ends or is interrupted.
   @Override

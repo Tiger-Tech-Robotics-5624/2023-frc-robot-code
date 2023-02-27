@@ -24,6 +24,7 @@ public final class Constants {
   public static final int stickPortL = 1;
   public static final int stickPortR = 2;
 
+  /* Drive */
   //Wheel ports **Need to verify port id**
   public static final int CANPortL1 = 1; 
   public static final int CANPortL2 = 3; 
@@ -31,4 +32,10 @@ public final class Constants {
   public static final int CANPortR1 = 2; 
   public static final int CANPortR2 = 4; 
   
+  /* Elevator */
+  public static final int FILLER = 0;
+
+  /* Intake */
+  public static final int TalonPort1 = 4; //Victor?
+  public static final int FILLER3 = 0;
 }

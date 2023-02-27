@@ -38,6 +38,7 @@ public class RobotContainer {
     intakeCmd = new IntakeCommand(intakeSub);
 
     driveSub.setDefaultCommand(driveCmd);
+    intakeSub.setDefaultCommand(intakeCmd);
   }
 
   private void configureBindings() {

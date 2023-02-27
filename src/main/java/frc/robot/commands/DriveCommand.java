@@ -25,6 +25,7 @@ public class DriveCommand extends CommandBase {
   @Override
   public void execute() {
     driveSub.drive(RobotContainer.stickLeft.getY(), RobotContainer.stickRight.getY(), RobotContainer.stickRight.getZ());
+    //driveSub.test(RobotContainer.xboxController.getRightTriggerAxis());
   }
 
   // Called once the command ends or is interrupted.

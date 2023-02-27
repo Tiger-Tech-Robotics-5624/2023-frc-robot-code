@@ -4,6 +4,10 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
+import com.ctre.phoenix.motorcontrol.VictorSPXControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.SoftLimitDirection;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -24,6 +28,9 @@ public class DriveSubsystem extends SubsystemBase {
   private MotorControllerGroup rightGroup;
   private MotorControllerGroup leftGroup;
 
+  private TalonSRX talon1;
+  private VictorSPX victor1;
+
   public DriveSubsystem() {
     motorR1 = new CANSparkMax(Constants.CANPortR1, MotorType.kBrushless);
     motorR2 = new CANSparkMax(Constants.CANPortR2, MotorType.kBrushless);
@@ -33,6 +40,8 @@ public class DriveSubsystem extends SubsystemBase {
 
     rightGroup = new MotorControllerGroup(motorR1, motorR2);
     leftGroup = new MotorControllerGroup(motorL1, motorL2);
+
+    victor1 = new VictorSPX(4);
   }
 
   public void drive(double leftY, double rightY, double analogRead) 
@@ -98,5 +107,10 @@ public class DriveSubsystem extends SubsystemBase {
   public void stop(){
     rightGroup.set(0);
     leftGroup.set(0);
+  }
+
+  public void test(double rTAxis) {
+    victor1.set(VictorSPXControlMode.PercentOutput, 0.75 * rTAxis);
+
   }
 }
