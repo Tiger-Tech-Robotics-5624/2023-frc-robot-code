@@ -4,10 +4,13 @@
 
 package frc.robot;
 
-import frc.robot.commands.Autos;
+import frc.robot.commands.AutonomousCommand;
 import frc.robot.commands.DriveCommand;
+import frc.robot.commands.ElevatorCommand;
 import frc.robot.commands.IntakeCommand;
+import frc.robot.subsystems.AutonomousSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -21,9 +24,13 @@ public class RobotContainer {
 
   DriveSubsystem driveSub;
   IntakeSubsystem intakeSub;
+  ElevatorSubsystem elevatorSub;
+  AutonomousSubsystem autoSub;
 
   DriveCommand driveCmd;
   IntakeCommand intakeCmd;
+  ElevatorCommand elevatorCmd;
+  AutonomousCommand autoCmd;
 
   public RobotContainer() {
     xboxController = new XboxController(Constants.xboxPort);
@@ -33,12 +40,17 @@ public class RobotContainer {
 
     driveSub = new DriveSubsystem();
     intakeSub = new IntakeSubsystem();
+    elevatorSub = new ElevatorSubsystem();
+    autoSub = new AutonomousSubsystem(driveSub,intakeSub);
 
     driveCmd = new DriveCommand(driveSub);
     intakeCmd = new IntakeCommand(intakeSub);
+    elevatorCmd = new ElevatorCommand(elevatorSub);
+    autoCmd = new AutonomousCommand(autoSub);
 
     driveSub.setDefaultCommand(driveCmd);
     intakeSub.setDefaultCommand(intakeCmd);
+    elevatorSub.setDefaultCommand(elevatorCmd);
   }
 
   private void configureBindings() {
