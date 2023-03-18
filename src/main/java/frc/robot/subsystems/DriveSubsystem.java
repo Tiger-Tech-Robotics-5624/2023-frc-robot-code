@@ -38,7 +38,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   public void drive(double leftY, double rightY, double analogRead) 
   {
-    if(rightY > 0.03 || rightY < -0.03 || leftY > 0.03 || leftY < -0.03){
+    if(rightY > 0.05 || rightY < -0.05 || leftY > 0.05 || leftY < -0.05){
       rightGroup.set(0.75 * (rightY * (0.50 - (0.25 * analogRead))) );
       leftGroup.set(0.75 * (-leftY * (0.50 - (0.25 * analogRead))) );
       SmartDashboard.putNumber("Right Group Speed",0.75 * rightY * (0.50 - (0.25 * analogRead)));
@@ -89,6 +89,11 @@ public class DriveSubsystem extends SubsystemBase {
     else{
       stop();
     }
+  }
+
+  public void autonomousDrive(double speed) {
+    rightGroup.set(speed); //Just driving out of base, will consider charge pad later. 
+    leftGroup.set(-speed);
   }
 
   @Override

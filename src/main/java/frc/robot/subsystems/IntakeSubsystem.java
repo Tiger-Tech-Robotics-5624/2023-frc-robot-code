@@ -4,39 +4,72 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.VictorSPXControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class IntakeSubsystem extends SubsystemBase {
   //Initilize Motors Here
-  private VictorSPX talon;
+  private TalonSRX talon;
+  private VictorSPX victor;
   /** Creates a new IntakeSubsystem. */
   public IntakeSubsystem() {
     //Define Motors Here
-    talon = new VictorSPX(Constants.TalonPort1);
+    talon = new TalonSRX(Constants.TalonPort1);
+    victor = new VictorSPX(Constants.VictorPort1);
+    victor.configNeutralDeadband(0.03);
+    
+
   }
 
   public void pullPushIntake(double leftTAxis,double rightTAxis) {
     if(leftTAxis > 0.03 && rightTAxis <= 0.03) {
-      talon.set(VictorSPXControlMode.PercentOutput,-leftTAxis);
+      talon.set(TalonSRXControlMode.PercentOutput,-leftTAxis); //Pull
     }
     else if(rightTAxis > 0.03 && leftTAxis <= 0.03){
-      talon.set(VictorSPXControlMode.PercentOutput,rightTAxis);
+      talon.set(TalonSRXControlMode.PercentOutput,rightTAxis); //Push
     }
     else {
       stop();
     }
   }
 
+  public void stop() {
+    talon.set(TalonSRXControlMode.PercentOutput,0);
+  }
+
+  public void lower(double yAxis, boolean rightBumper) {
+    SmartDashboard.putNumber("Left Joy Stick X Box", yAxis);
+    if(yAxis > 0.1){
+      victor.setInverted(false);
+      victor.set(VictorSPXControlMode.PercentOutput, 0.35 * yAxis);
+    }
+    else if(yAxis < -0.1) {
+      victor.setInverted(true);
+      victor.set(VictorSPXControlMode.PercentOutput, -0.40 * yAxis);
+    }
+    else if(rightBumper) {
+      victor.setInverted(true);
+      victor.set(VictorSPXControlMode.PercentOutput,0.185);
+    }
+    else {
+      stopLower();
+    }
+  }
+
+  public void stopLower() {
+    victor.set(VictorSPXControlMode.PercentOutput,0);
+  }
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
   }
   
-  public void stop() {
-    talon.set(VictorSPXControlMode.PercentOutput,0);
-  }
+  
 }
   

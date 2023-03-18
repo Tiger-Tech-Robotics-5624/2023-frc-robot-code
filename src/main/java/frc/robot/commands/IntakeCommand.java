@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Robot;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.IntakeSubsystem;
 
@@ -25,6 +26,7 @@ public class IntakeCommand extends CommandBase {
   @Override
   public void execute() {
     intakeSub.pullPushIntake(RobotContainer.xboxController.getLeftTriggerAxis(),RobotContainer.xboxController.getRightTriggerAxis());
+    intakeSub.lower(-RobotContainer.xboxController.getLeftY(),RobotContainer.xboxController.getRightBumper());
   }
 
   // Called once the command ends or is interrupted.

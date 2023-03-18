@@ -41,23 +41,22 @@ public class RobotContainer {
     driveSub = new DriveSubsystem();
     intakeSub = new IntakeSubsystem();
     elevatorSub = new ElevatorSubsystem();
-    autoSub = new AutonomousSubsystem(driveSub,intakeSub);
+    //autoSub = new AutonomousSubsystem(driveSub,intakeSub,elevatorSub);
 
     driveCmd = new DriveCommand(driveSub);
     intakeCmd = new IntakeCommand(intakeSub);
     elevatorCmd = new ElevatorCommand(elevatorSub);
-    autoCmd = new AutonomousCommand(autoSub);
+    //autoCmd = new AutonomousCommand(autoSub);
 
     driveSub.setDefaultCommand(driveCmd);
     intakeSub.setDefaultCommand(intakeCmd);
     elevatorSub.setDefaultCommand(elevatorCmd);
+    //autoSub.setDefaultCommand(autoCmd);
   }
 
-  private void configureBindings() {
+  private void configureBindings() {}
 
+  public Command getAutonomousCommand() {
+    return autoCmd;
   }
-
-//  public Command getAutonomousCommand() {
-
-//  }
 }
