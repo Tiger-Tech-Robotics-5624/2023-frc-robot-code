@@ -5,17 +5,20 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class AutonomousSubsystem extends SubsystemBase {
+public class AutonomousSubsystem {
   DriveSubsystem driveSub;
   IntakeSubsystem intakeSub;
   VisionSubsystem visionSub;
   ElevatorSubsystem elevatorSub;
   Timer timer; 
 
-  double driveTime = 6;
-  double driveStop = 7;
+  boolean cube = true;
+  boolean balance = false;
+
+  boolean teleop = false;
+
   /** Creates a new AutonomousSubsystem. */
   public AutonomousSubsystem(DriveSubsystem drive, IntakeSubsystem intake, ElevatorSubsystem elevator) {
     driveSub = drive;
@@ -25,36 +28,91 @@ public class AutonomousSubsystem extends SubsystemBase {
     timer = new Timer();
   }
 
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-  }
-
   public void start(){
+    timer.reset();
+    teleop = false;
     timer.start();
+    driveSub.resetGyro();
+    
   }
 
+  public void stop() {
+    teleop = true;
+    intakeSub.stop();
+    intakeSub.stopLower();
+    elevatorSub.stop();
+    driveSub.stop();
+  }
+  //Autonomous Plan without limelight:
+  //1. Move elevator up to slightly above Mid for CUBE/BALL
+  //2. Lower intake and then spit out cube (Might need to be slow or fast)
+  //3. Retract intake and then move elevator down
+  //4. Drive across boarder
+  
   public void runAutonomous() {
-    //if(timer.get() < driveTime) {
-    //  if(visionSub.getDistance() > 0.05) {
-    //    elevatorSub.verticalMove(0.25);
-    //  }
-    //  else if (visionSub.getDistance() < -0.05) {
-    //    elevatorSub.verticalMove(-0.15);
-    //  }
-    //  else if (visionSub.getDistance() == 0) {
-    //    elevatorSub.verticalMove(0.05);
-    //  }
-    //  else {
-    //    intakeSub.lower(0.75); // edit
-    //    intakeSub.pullPushIntake(0, 0.75); //edit
-    //  }
-    //}
-    if(timer.get() > driveTime && timer.get() < driveStop) {
-      driveSub.autonomousDrive(0.15); //Temp speed
+    //Cube Autonomous
+    // while(timer.get() < 15 && !teleop && cube) {
+      SmartDashboard.putNumber("Time 2", timer.get());
+      
+    //   if(timer.get() > 0 && timer.get() < 1){
+    //     elevatorSub.autoMove(-0.3);
+    //   }
+    //   else if(timer.get() > 1) {
+    //     elevatorSub.stop();
+    //   }
+
+    //   if(timer.get() > 0 && timer.get() < 1.5) {
+    //     intakeSub.lower(0.7, false);
+    //   }
+    //   else if(timer.get() > 2 && timer.get() < 3){
+    //     intakeSub.lower(0,true);
+    //     intakeSub.place(true);
+    //   }
+    //   else {
+    //     intakeSub.stop();
+    //   }
+    //   if(timer.get() > 4 && timer.get() < 6) {
+    //     intakeSub.lower(-1.2,false);
+    //   }
+    //   else {
+    //     intakeSub.stopLower();
+    //   }
+    // }
+
+
+    //Cone Autonomous
+    // while(timer.get() < 15 && !teleop && !cube) {
+    //   if(timer.get() > 0 && timer.get() < 1){
+    //     elevatorSub.autoMove(-0.3);
+    //   }
+    //   else if(timer.get() > 1) {
+    //     elevatorSub.stop();
+    //   }
+
+    //   if(timer.get() > 0 && timer.get() < 1.5) {
+    //     intakeSub.lower(0.7, false);
+    //   }
+    //   else if(timer.get() > 2 && timer.get() < 3){
+    //     intakeSub.lower(0,true);
+    //     intakeSub.place(true);
+    //   }
+    //   else {
+    //     intakeSub.stop();
+    //   }
+    //   if(timer.get() > 4 && timer.get() < 6) {
+    //     intakeSub.lower(-1.2,false);
+    //   }
+    //   else {
+    //     intakeSub.stopLower();
+    //   }
+    // }
+
+
+    
+      //Drive Autonomous
+    while(true) {//(timer.get() < 15 ){//&& timer.get() > 6) {
+       driveSub.autonomousDrive(-0.0, 0);
     }
-    else if (timer.get() > driveStop && timer.get() < driveStop+1) {
-      driveSub.stop();
-    }
+    
   }
 }

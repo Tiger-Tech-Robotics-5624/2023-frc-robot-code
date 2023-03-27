@@ -24,14 +24,18 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   public void verticalMove(double yAxis) {
     if(yAxis > 0.25 || yAxis < -0.25){
-      neo.set(0.35 * yAxis);
+      neo.set((0.35 * yAxis));
     }
     else {
       stop();
     }
   }
 
+  public void autoMove(double value) {
+    neo.set(value);
+  }
+
   public void stop() {
-    neo.set(-0.05);
+    neo.set(-0.075); 
   }
 }

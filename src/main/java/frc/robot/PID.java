@@ -4,25 +4,27 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj2.command.PIDSubsystem;
+public class PID {
+  double kp;
+  double ki;
+  double kd;
 
-public class PID extends PIDSubsystem {
+  double i = 0;
   /** Creates a new PID. */
-  public PID() {
-    super(
-        // The PIDController used by the subsystem
-        new PIDController(0, 0, 0));
+  public PID(double kp, double ki, double kd) {
+    this.kp = kp;
+    this.ki = ki;
+    this.kd = kd;
   }
 
-  @Override
-  public void useOutput(double output, double setpoint) {
-    // Use the output here
+  public PID(double kp, double ki) {
+    this.kp = kp;
+    this.ki = ki;
   }
 
-  @Override
-  public double getMeasurement() {
-    // Return the process variable measurement here
-    return 0;
+  public double calculate(double error) {
+    i += error * 0.02f;
+    double value = kp * error + ki * i;
+    return value;
   }
 }

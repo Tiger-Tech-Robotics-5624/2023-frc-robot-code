@@ -36,6 +36,6 @@ public final class Constants {
   public static final int CANPortElevator = 8;
 
   /* Intake */
-  public static final int TalonPort1 = 1; //In and Out, Talon
+  public static final int TalonPort1 = 0; //In and Out, Talon
   public static final int VictorPort1 = 4; //Raise and lower, Victor
 }

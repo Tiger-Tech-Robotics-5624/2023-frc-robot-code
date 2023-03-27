@@ -29,13 +29,25 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public void pullPushIntake(double leftTAxis,double rightTAxis) {
     if(leftTAxis > 0.03 && rightTAxis <= 0.03) {
-      talon.set(TalonSRXControlMode.PercentOutput,-leftTAxis); //Pull
+      talon.set(TalonSRXControlMode.PercentOutput,-leftTAxis * .50); //Push
     }
     else if(rightTAxis > 0.03 && leftTAxis <= 0.03){
-      talon.set(TalonSRXControlMode.PercentOutput,rightTAxis); //Push
+      talon.set(TalonSRXControlMode.PercentOutput,rightTAxis * .50); //Pull
     }
     else {
       stop();
+    }
+  }
+
+  public void place(boolean buttonA) {
+    if(buttonA) {
+      talon.set(TalonSRXControlMode.PercentOutput, -0.15);
+    }
+  }
+
+  public void shoot (boolean buttonB) {
+    if(buttonB) {
+      talon.set(TalonSRXControlMode.PercentOutput, -0.35);
     }
   }
 

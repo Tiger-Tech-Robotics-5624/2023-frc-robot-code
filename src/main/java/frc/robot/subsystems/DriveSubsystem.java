@@ -36,6 +36,7 @@ public class DriveSubsystem extends SubsystemBase {
   double value;
   double autoRightSpeed;
   double autoLeftSpeed;
+  double autoSpeed;
 
   public DriveSubsystem() {
     motorR1 = new CANSparkMax(Constants.CANPortR1, MotorType.kBrushless);
@@ -64,17 +65,30 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public void autonomousDrive(double speed, double target) {
-
-    //rightGroup.set(speed);
-    //leftGroup.set(-speed);
-
     error = target - gyro.getAngle();
+    SmartDashboard.putNumber("Gryo Angle", gyro.getAngle());
+    SmartDashboard.putNumber("Error", error);
+    
     value = drivePID.calculate(error);
+    SmartDashboard.putNumber("Value", value);
+    
+    SmartDashboard.putNumber("Auto Speed", autoSpeed);
     autoLeftSpeed = speed + value;
     autoRightSpeed = speed + value;
-    if((autoRightSpeed < 0.4 || autoLeftSpeed < 0.4) || (autoRightSpeed > -0.4 || autoLeftSpeed > -0.4)) {
-      rightGroup.set(autoRightSpeed);
-      leftGroup.set(autoLeftSpeed);
+    SmartDashboard.putNumber("Left Speed", autoLeftSpeed);
+    SmartDashboard.putNumber("Right Speed", autoRightSpeed);
+    if(value > 0.5) {
+      leftGroup.set(value * 0.5);
+      rightGroup.set(value * 0.5);
+    }
+
+    else if(value < -0.5) {
+      rightGroup.set(value * 0.5);
+      leftGroup.set(value * 0.5);
+    }
+    else {
+      rightGroup.set(-0.025);
+      leftGroup.set(0.025);
     }
   }
 

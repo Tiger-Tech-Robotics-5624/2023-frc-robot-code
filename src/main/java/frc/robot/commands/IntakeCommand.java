@@ -27,6 +27,8 @@ public class IntakeCommand extends CommandBase {
   public void execute() {
     intakeSub.pullPushIntake(RobotContainer.xboxController.getLeftTriggerAxis(),RobotContainer.xboxController.getRightTriggerAxis());
     intakeSub.lower(-RobotContainer.xboxController.getLeftY(),RobotContainer.xboxController.getRightBumper());
+    intakeSub.place(RobotContainer.xboxController.getAButton());
+    intakeSub.shoot(RobotContainer.xboxController.getBButton());
   }
 
   // Called once the command ends or is interrupted.
