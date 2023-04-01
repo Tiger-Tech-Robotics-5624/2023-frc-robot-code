@@ -4,14 +4,23 @@
 
 package frc.robot;
 
+import java.util.Map;
+
 import edu.wpi.first.apriltag.AprilTagDetector;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.cscore.VideoProperty;
 import edu.wpi.first.cscore.VideoMode.PixelFormat;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.AutonomousSubsystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -24,6 +33,10 @@ public class Robot extends TimedRobot {
   private UsbCamera camera;
   private RobotContainer m_robotContainer;
   private AprilTagDetector detector;
+
+  private ShuffleboardLayout cameraCommands;
+  private GenericEntry exposure;
+  private GenericEntry update;
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -33,22 +46,28 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+
+    cameraCommands = Shuffleboard.getTab("Camera stuff").getLayout("Exposure", BuiltInLayouts.kList).withSize(1,2).withProperties(Map.of("Label position","HIDDEN"));
+    exposure = cameraCommands.add("Exposure Value", 50).getEntry();
+    update = cameraCommands.add("Update",false).withWidget(BuiltInWidgets.kToggleButton).getEntry();
+
+
     camera = CameraServer.startAutomaticCapture();
     camera.setVideoMode(PixelFormat.kMJPEG, 500, 500, 30);
+    camera.setExposureManual(75);
     //sets Autofocus to off
     // VideoProperty autofocus = camera.getProperty("focus_auto");
     // autofocus.set(0);
     //sets focus to 10, (goes 0-250, 0 being far, 250 being close)
     // VideoProperty focus = camera.getProperty("focus_Absolute");
     // focus.set(10);
-    camera.setExposureManual(1);
-    camera.setBrightness(10);
+    
+    camera.setBrightness(15);
 
     //April tag identifier
     
     
   }
-
   /**
    * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
    * that you want ran during disabled, autonomous, teleoperated and test.
@@ -63,6 +82,10 @@ public class Robot extends TimedRobot {
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
+    if(update.getBoolean(false)) {
+      camera.setExposureManual((int) exposure.getDouble(2));
+      update.setBoolean(false);
+    }
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -84,7 +107,8 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during autonomous. */
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {
+  }
 
   @Override
   public void teleopInit() {

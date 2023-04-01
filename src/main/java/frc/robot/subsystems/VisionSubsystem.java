@@ -37,4 +37,6 @@ public class VisionSubsystem extends SubsystemBase {
     return (lowerPole-cameraHeight) / Math.tan(Math.toRadians(cameraAngle + getTy()));
     //return (upperPole-cameraHeight) / Math.tan(Math.toRadians(cameraAngle + getTy()));
   }
+
+  
 }

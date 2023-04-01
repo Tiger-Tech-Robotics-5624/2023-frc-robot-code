@@ -10,8 +10,11 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -38,6 +41,9 @@ public class DriveSubsystem extends SubsystemBase {
   double autoLeftSpeed;
   double autoSpeed;
 
+  private ShuffleboardTab tab;
+  private GenericEntry speed;
+
   public DriveSubsystem() {
     motorR1 = new CANSparkMax(Constants.CANPortR1, MotorType.kBrushless);
     motorR2 = new CANSparkMax(Constants.CANPortR2, MotorType.kBrushless);
@@ -51,7 +57,14 @@ public class DriveSubsystem extends SubsystemBase {
     gyro = new AHRS(SPI.Port.kMXP);
     drivePID = new PID(kp, ki);
 
+    // tab = Shuffleboard.getTab("Autonomous");
+    // speed = tab.addPersistent("Speed", 0).getEntry();
   }
+
+  // public void test() {
+  //   double testSpeed = speed.getDouble(0);
+  //   autonomousDrive(testSpeed, 0);
+  // }
 
   public void drive(double leftY, double rightY, double analogRead) 
   {
@@ -68,27 +81,32 @@ public class DriveSubsystem extends SubsystemBase {
     error = target - gyro.getAngle();
     SmartDashboard.putNumber("Gryo Angle", gyro.getAngle());
     SmartDashboard.putNumber("Error", error);
-    
     value = drivePID.calculate(error);
-    SmartDashboard.putNumber("Value", value);
-    
-    SmartDashboard.putNumber("Auto Speed", autoSpeed);
-    autoLeftSpeed = speed + value;
-    autoRightSpeed = speed + value;
-    SmartDashboard.putNumber("Left Speed", autoLeftSpeed);
-    SmartDashboard.putNumber("Right Speed", autoRightSpeed);
-    if(value > 0.5) {
-      leftGroup.set(value * 0.5);
-      rightGroup.set(value * 0.5);
+    if(value > 0.25) {
+      leftGroup.set(0.05);
+      rightGroup.set(0.05);
     }
 
-    else if(value < -0.5) {
-      rightGroup.set(value * 0.5);
-      leftGroup.set(value * 0.5);
+    else if(value < -0.25) {
+      rightGroup.set(-0.05);
+      leftGroup.set(-0.05);
     }
     else {
-      rightGroup.set(-0.025);
-      leftGroup.set(0.025);
+      rightGroup.set(speed);
+      leftGroup.set(-speed);
+    }
+  }
+
+  //AutoBalance
+  public void autoBalance(){
+    if(gyro.getRoll()+4 > 10){
+      rightGroup.set(-0.1);
+      leftGroup.set(0.1);
+    }
+    else if(gyro.getRoll()+4 < -10){
+      rightGroup.set(0.1);
+      leftGroup.set(-0.1);
+
     }
   }
 
