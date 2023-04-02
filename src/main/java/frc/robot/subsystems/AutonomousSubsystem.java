@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.Timer;
+import frc.robot.Constants;
 
 public class AutonomousSubsystem {
   DriveSubsystem driveSub;
@@ -123,6 +124,8 @@ public class AutonomousSubsystem {
         //   driveSub.autonomousDrive(-0.8, 0);
         // }
 
+
+        
         //Turning and moving fowards
         if(timer.get()>6 && timer.get()<6.2) {
           driveSub.autonomousDrive(-0.2, 0);
@@ -133,12 +136,14 @@ public class AutonomousSubsystem {
           driveSub.zeroEncoder();
         }
 
-        else if(timer.get()>8 && driveSub.getAverageEncoder() < 69) {
+        else if(timer.get()>8 && driveSub.getAverageEncoder()/Constants.kEncoder2Feet < 6) {
           driveSub.autonomousDrive(0.8, 180);
         }
 
+
+
         //Attempt autobalance after it is on charge pad
-        else if(driveSub.getAverageEncoder() > 69) {
+        else if(driveSub.getAverageEncoder()/Constants.kEncoder2Feet > 6) {
           driveSub.autoBalance();
         }
       }

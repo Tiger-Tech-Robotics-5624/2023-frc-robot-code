@@ -45,7 +45,6 @@ public class DriveSubsystem extends SubsystemBase {
   double kp = 0; //Proportional
   double ki = 0; //Integral
   double kd = 0; //Derivative
-  double period = 2; //Not sure if this is needed, need to figure out this value probably 2 updates/sec, source: https://controlstation.com/blog/rockwell-pid-execution-time-the-difference-between-continuous-and-periodic-tasks/#:~:text=The%20timing%20associated%20with%20a,update%20time%20of%20500%20milliseconds.
   
   double error;
   double value;
@@ -70,8 +69,10 @@ public class DriveSubsystem extends SubsystemBase {
     leftGroup = new MotorControllerGroup(motorL1, motorL2);
 
     gyro = new AHRS(SPI.Port.kMXP);
-    PID = new PIDController(kp, ki, kd, period);
+    PID = new PIDController(kp, ki, kd);
     PID.setTolerance(1);
+    //Range of Integral values
+    PID.setIntegratorRange(-0.5, 0.5);
 
     encoderR1 = motorR1.getEncoder();
     encoderR2 = motorR2.getEncoder();
@@ -87,18 +88,37 @@ public class DriveSubsystem extends SubsystemBase {
 
   public void pidTest() {
     SmartDashboard.putNumber("Average Encoder Value", getAverageEncoder());
-    //Attempts to drive 10 ft with tolerance of 1 ft
+    //Attempts to drive 6 ft with tolerance of 1 ft
+
+    //**Tuning PID**
+    //Slowly increase P by small increments and test the response
+    //Eventually, get your P so that it's smooth, and if it oscillates a little, that's okay
+    //Next, increase D slowly until the oscillations go away
+    //Finally, increase I until it is able to home into the desired target position
+
+    //Not sure if this is bad but if so, then just use the commented out version insead and reboot code :(
     PID.setPID(kPEntry.getDouble(0),kIEntry.getDouble(0),kDEntry.getDouble(0));
+    //PID.setPID(kp,kI,kD);
+    
     double PIDSpeed = PID.calculate(getAverageEncoder()/Constants.kEncoder2Feet); //Using the 10 ft test for the encoder value to feet conversion
+    
+    //Moves foward when xButton pressed, backwards when yButton pressed.
     rightGroup.set(-PIDSpeed);
     leftGroup.set(PIDSpeed);
   }
 
-  public void pidTestStart(boolean xButton) {
+  public void pidTestStart(boolean xButton,boolean yButton) {
     if(xButton) {
-      PID.setSetpoint(10);
+      PID.setSetpoint(6);
+    }
+    else if(yButton) {
+      PID.setSetpoint(0);
     }
   }
+
+
+
+
 
   public void drive(double leftY, double rightY, double analogRead) 
   {
@@ -146,7 +166,7 @@ public class DriveSubsystem extends SubsystemBase {
       rightGroup.set(0.1);
       leftGroup.set(-0.1);
     }
-    else if(getAverageEncoder() > 72 && getAverageEncoder() < 73 && gyro.getRoll() < 10 && gyro.getRoll() > -10) {
+    else if(getAverageEncoder()/Constants.kEncoder2Feet > 5.5 && getAverageEncoder()/Constants.kEncoder2Feet < 6.5 && gyro.getRoll() < 10 && gyro.getRoll() > -10) {
       stop();
     }
   }

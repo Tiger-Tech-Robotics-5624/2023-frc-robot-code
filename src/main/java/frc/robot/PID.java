@@ -8,15 +8,14 @@ public class PID {
   double kp;
   double ki;
   double kd;
-  double period;
+
 
   double i = 0;
   /** Creates a new PID. */
-  public PID(double kp, double ki, double kd, double period) {
+  public PID(double kp, double ki, double kd) {
     this.kp = kp;
     this.ki = ki;
     this.kd = kd;
-    this.period = period;
   }
 
   public double calculate(double error) {
