@@ -5,15 +5,17 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
-
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -28,12 +30,22 @@ public class DriveSubsystem extends SubsystemBase {
   private CANSparkMax motorL1; //ID 1
   private CANSparkMax motorL2; //ID 3
 
+  private RelativeEncoder encoderR1;
+  private RelativeEncoder encoderR2;
+
+  private RelativeEncoder encoderL1;
+  private RelativeEncoder encoderL2;
+
   private MotorControllerGroup rightGroup;
   private MotorControllerGroup leftGroup;
 
+  //PID stuff
   private AHRS gyro;
-  private PID drivePID;
-  double kp = 0.1, ki = 0;
+  private PIDController PID;
+  double kp = 0; //Proportional
+  double ki = 0; //Integral
+  double kd = 0; //Derivative
+  double period = 2; //Not sure if this is needed, need to figure out this value probably 2 updates/sec, source: https://controlstation.com/blog/rockwell-pid-execution-time-the-difference-between-continuous-and-periodic-tasks/#:~:text=The%20timing%20associated%20with%20a,update%20time%20of%20500%20milliseconds.
   
   double error;
   double value;
@@ -41,8 +53,11 @@ public class DriveSubsystem extends SubsystemBase {
   double autoLeftSpeed;
   double autoSpeed;
 
-  private ShuffleboardTab tab;
-  private GenericEntry speed;
+  ShuffleboardTab tab;
+  GenericEntry kPEntry;
+  GenericEntry kIEntry;
+  GenericEntry kDEntry;
+  GenericEntry periodEntry;
 
   public DriveSubsystem() {
     motorR1 = new CANSparkMax(Constants.CANPortR1, MotorType.kBrushless);
@@ -55,16 +70,35 @@ public class DriveSubsystem extends SubsystemBase {
     leftGroup = new MotorControllerGroup(motorL1, motorL2);
 
     gyro = new AHRS(SPI.Port.kMXP);
-    drivePID = new PID(kp, ki);
+    PID = new PIDController(kp, ki, kd, period);
+    PID.setTolerance(1);
 
-    // tab = Shuffleboard.getTab("Autonomous");
-    // speed = tab.addPersistent("Speed", 0).getEntry();
+    encoderR1 = motorR1.getEncoder();
+    encoderR2 = motorR2.getEncoder();
+    encoderL1 = motorL1.getEncoder();
+    encoderL2 = motorL2.getEncoder();
+    
+    tab = Shuffleboard.getTab("PID Testing");
+    kPEntry = tab.add("kP", 0).getEntry();
+    kIEntry = tab.add("kI", 0).getEntry();
+    kDEntry = tab.add("kD", 0).getEntry();
+    periodEntry = tab.add("period", 0).getEntry();
   }
 
-  // public void test() {
-  //   double testSpeed = speed.getDouble(0);
-  //   autonomousDrive(testSpeed, 0);
-  // }
+  public void pidTest() {
+    SmartDashboard.putNumber("Average Encoder Value", getAverageEncoder());
+    //Attempts to drive 10 ft with tolerance of 1 ft
+    PID.setPID(kPEntry.getDouble(0),kIEntry.getDouble(0),kDEntry.getDouble(0));
+    double PIDSpeed = PID.calculate(getAverageEncoder()/Constants.kEncoder2Feet); //Using the 10 ft test for the encoder value to feet conversion
+    rightGroup.set(-PIDSpeed);
+    leftGroup.set(PIDSpeed);
+  }
+
+  public void pidTestStart(boolean xButton) {
+    if(xButton) {
+      PID.setSetpoint(10);
+    }
+  }
 
   public void drive(double leftY, double rightY, double analogRead) 
   {
@@ -81,7 +115,8 @@ public class DriveSubsystem extends SubsystemBase {
     error = target - gyro.getAngle();
     SmartDashboard.putNumber("Gryo Angle", gyro.getAngle());
     SmartDashboard.putNumber("Error", error);
-    value = drivePID.calculate(error);
+    // value = drivePID.calculate(error);
+    value = error * 0.1;
     if(value > 0.25) {
       leftGroup.set(0.05);
       rightGroup.set(0.05);
@@ -98,6 +133,10 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   //AutoBalance
+  public double getAverageEncoder() {
+    return (Math.abs(encoderR1.getPosition()) + Math.abs(encoderR2.getPosition()) + Math.abs(encoderL1.getPosition()) + Math.abs(encoderL2.getPosition())) / 4;
+  }
+
   public void autoBalance(){
     if(gyro.getRoll()+4 > 10){
       rightGroup.set(-0.1);
@@ -106,7 +145,9 @@ public class DriveSubsystem extends SubsystemBase {
     else if(gyro.getRoll()+4 < -10){
       rightGroup.set(0.1);
       leftGroup.set(-0.1);
-
+    }
+    else if(getAverageEncoder() > 72 && getAverageEncoder() < 73 && gyro.getRoll() < 10 && gyro.getRoll() > -10) {
+      stop();
     }
   }
 
@@ -122,5 +163,12 @@ public class DriveSubsystem extends SubsystemBase {
   public void stop(){
     rightGroup.set(0);
     leftGroup.set(0);
+  }
+
+  public void zeroEncoder() {
+    encoderR1.setPosition(0);
+    encoderR2.setPosition(0);
+    encoderL1.setPosition(0);
+    encoderL2.setPosition(0);
   }
 }

@@ -82,6 +82,8 @@ public class Robot extends TimedRobot {
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
+
+    
     if(update.getBoolean(false)) {
       camera.setExposureManual((int) exposure.getDouble(2));
       update.setBoolean(false);
@@ -119,7 +121,6 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
-    //m_autonomousCommand.cancel();
   }
 
   /** This function is called periodically during operator control. */

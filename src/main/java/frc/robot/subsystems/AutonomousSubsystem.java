@@ -4,18 +4,7 @@
 
 package frc.robot.subsystems;
 
-import java.util.Map;
-import java.util.function.BooleanSupplier;
-
-import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class AutonomousSubsystem {
   DriveSubsystem driveSub;
@@ -24,13 +13,6 @@ public class AutonomousSubsystem {
   ElevatorSubsystem elevatorSub;
   Timer timer; 
 
-  boolean cube = true;
-  boolean balance = false;
-
-  private ShuffleboardLayout autoDrive;
-  private ShuffleboardLayout autoStart;
-  private GenericEntry drive;
-  private GenericEntry start;
   
   boolean teleop = false;
 
@@ -41,11 +23,6 @@ public class AutonomousSubsystem {
     elevatorSub = elevator;
     visionSub = new VisionSubsystem();
     timer = new Timer();
-
-    autoDrive = Shuffleboard.getTab("Autonomous").getLayout("Auto Balance").getLayout("Auto Drive Type", BuiltInLayouts.kList).withSize(1,2).withProperties(Map.of("Label position","HIDDEN"));
-    autoStart = Shuffleboard.getTab("Autonomous").getLayout("Auto Balance").getLayout("Auto Start Type", BuiltInLayouts.kList).withSize(1,2).withProperties(Map.of("Label position","HIDDEN"));
-    this.drive = autoDrive.add("Auto-Balancing?", false).withWidget(BuiltInWidgets.kToggleButton).getEntry();
-    start = autoStart.add("Start with Cube?", true).withWidget(BuiltInWidgets.kToggleButton).getEntry();
   }
 
   public void periodic(){
@@ -68,20 +45,14 @@ public class AutonomousSubsystem {
     elevatorSub.stop();
     driveSub.stop();
   }
-  //Autonomous Plan without limelight:
-  //1. Move elevator up to slightly above Mid for CUBE/BALL
-  //2. Lower intake and then spit out cube (Might need to be slow or fast)
-  //3. Retract intake and then move elevator down
-  //4. Drive across boarder
   
-  public void runAutonomous() {
+  public void runAutonomous(String item, boolean balance) {
 
     //Testing
     // while(timer.get() < 1000) {
-    //   SmartDashboard.putBoolean("Cube start", cube);
-    //   SmartDashboard.putBoolean("Auto-Balance", balance);
-    // }
 
+    // }
+      
     //Autonomous
     while(timer.get() < 15 && !teleop) {
       if(timer.get() > 0 && timer.get() < 1){
@@ -94,7 +65,7 @@ public class AutonomousSubsystem {
       //Starting configuration
 
       //Starting with cube
-      if(cube) {
+      if(item == "CUBE") {
         if(timer.get() > 0 && timer.get() < 2.6) {
           intakeSub.autoLower(1, false);
         }
@@ -147,10 +118,27 @@ public class AutonomousSubsystem {
 
       //Auto-balance??
       else {
-        if(timer.get()>6 && timer.get()<8){
-          driveSub.autonomousDrive(-0.8, 0);
+        //Moving backwards
+        // if(timer.get()>6 && driveSub.getAverageEncoder() < 69) {
+        //   driveSub.autonomousDrive(-0.8, 0);
+        // }
+
+        //Turning and moving fowards
+        if(timer.get()>6 && timer.get()<6.2) {
+          driveSub.autonomousDrive(-0.2, 0);
         }
-        else if(timer.get() > 8) {
+
+        else if(timer.get()>6.2 && timer.get() < 8){
+          driveSub.autonomousDrive(0, 180);
+          driveSub.zeroEncoder();
+        }
+
+        else if(timer.get()>8 && driveSub.getAverageEncoder() < 69) {
+          driveSub.autonomousDrive(0.8, 180);
+        }
+
+        //Attempt autobalance after it is on charge pad
+        else if(driveSub.getAverageEncoder() > 69) {
           driveSub.autoBalance();
         }
       }
