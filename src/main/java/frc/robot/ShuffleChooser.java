@@ -9,16 +9,20 @@ public class ShuffleChooser {
     public ShuffleChooser() {
         start = new SendableChooser<>();
         balance = new SendableChooser<>();
+        configStartScore();
+        configureLocation();
 
 
     } 
 
     public void configStartScore() {
+        start.setDefaultOption("Cube", "CUBE");
         start.addOption("Cube","CUBE");
         start.addOption("Cone", "CONE");
     }
 
     public void configureLocation() {
+        balance.setDefaultOption("Sides", false);
         balance.addOption("Mid",true);
         balance.addOption("Sides", false);
     }

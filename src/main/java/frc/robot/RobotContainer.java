@@ -61,6 +61,7 @@ public class RobotContainer {
   private void configureBindings() {}
 
   public Command getAutonomousCommand() {
+    // return new AutonomousCommand(autoSub, false, "CUBE");
     return new AutonomousCommand(autoSub, chooser.getStartLocation().getSelected(), chooser.getStartItem().getSelected());
   }
 

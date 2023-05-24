@@ -53,7 +53,7 @@ public class Robot extends TimedRobot {
 
 
     camera = CameraServer.startAutomaticCapture();
-    camera.setVideoMode(PixelFormat.kMJPEG, 500, 500, 30);
+    camera.setVideoMode(PixelFormat.kMJPEG, 500, 500, 15);
     camera.setExposureManual(75);
     //sets Autofocus to off
     // VideoProperty autofocus = camera.getProperty("focus_auto");

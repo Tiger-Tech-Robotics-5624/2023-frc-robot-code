@@ -25,8 +25,9 @@ public class DriveCommand extends CommandBase {
   @Override
   public void execute() {
     driveSub.drive(-RobotContainer.stickLeft.getY(), -RobotContainer.stickRight.getY(), RobotContainer.stickRight.getZ());
-    driveSub.pidTestStart(RobotContainer.xboxController.getXButton(), RobotContainer.xboxController.getYButton());
-    driveSub.pidTest();
+    
+    // driveSub.pidTestStart(RobotContainer.xboxController.getXButton(), RobotContainer.xboxController.getYButton());
+    // driveSub.pidTest();
   }
 
   // Called once the command ends or is interrupted.

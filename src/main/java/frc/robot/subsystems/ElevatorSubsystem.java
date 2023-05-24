@@ -27,7 +27,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public void verticalMove(double yAxis) {
-    SmartDashboard.putNumber("Elevator Encoder (Manual)", e_encoder.getPosition());
+    // SmartDashboard.putNumber("Elevator Encoder (Manual)", e_encoder.getPosition());
     if(yAxis > 0.25 || yAxis < -0.25){
       neo.set((0.35 * yAxis));
     }
@@ -37,7 +37,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public void autoMove(double value) {
-    SmartDashboard.putNumber("Elevator Encoder (Auto)", e_encoder.getPosition());
+    // SmartDashboard.putNumber("Elevator Encoder (Auto)", e_encoder.getPosition());
     neo.set(value);
   }
 

@@ -59,9 +59,13 @@ public class AutonomousSubsystem {
       if(timer.get() > 0 && timer.get() < 1){
         elevatorSub.autoMove(-0.35);
       }
-      else if(timer.get() > 1) {
+      else if(timer.get() > 6 && timer.get() < 7) {
+        elevatorSub.autoMove(0.35);
+      }
+      else { 
         elevatorSub.stop();
       }
+
 
       //Starting configuration
 
@@ -90,15 +94,15 @@ public class AutonomousSubsystem {
         if(timer.get() > 0 && timer.get() < 3.5) {
           intakeSub.autoLower(1, false);
         }
-        else if(timer.get() > 3.5 && timer.get() < 4.5){
+        else if(timer.get() > 3.5 && timer.get() < 4){
           intakeSub.autoLower(0,true);
           intakeSub.shoot(true);
         }
         else {
           intakeSub.stop();
         }
-        if(timer.get() > 4.5 && timer.get() < 6) {
-          intakeSub.autoLower(-0.38,false);
+        if(timer.get() > 4 && timer.get() < 6) {
+          intakeSub.autoLower(-1,false);
         }
         else {
           intakeSub.stopLower();

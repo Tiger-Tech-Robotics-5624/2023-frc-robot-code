@@ -6,10 +6,12 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.SPI;
@@ -56,9 +58,10 @@ public class DriveSubsystem extends SubsystemBase {
   GenericEntry kPEntry;
   GenericEntry kIEntry;
   GenericEntry kDEntry;
-  GenericEntry periodEntry;
+  GenericEntry PIDSpeedValue;
 
   public DriveSubsystem() {
+
     motorR1 = new CANSparkMax(Constants.CANPortR1, MotorType.kBrushless);
     motorR2 = new CANSparkMax(Constants.CANPortR2, MotorType.kBrushless);
 
@@ -79,15 +82,16 @@ public class DriveSubsystem extends SubsystemBase {
     encoderL1 = motorL1.getEncoder();
     encoderL2 = motorL2.getEncoder();
     
-    tab = Shuffleboard.getTab("PID Testing");
-    kPEntry = tab.add("kP", 0).getEntry();
-    kIEntry = tab.add("kI", 0).getEntry();
-    kDEntry = tab.add("kD", 0).getEntry();
-    periodEntry = tab.add("period", 0).getEntry();
+    // tab = Shuffleboard.getTab("PID Testing");
+    // kPEntry = tab.addPersistent("kP", 0).getEntry();
+    // kIEntry = tab.addPersistent("kI", 0).getEntry();
+    // kDEntry = tab.addPersistent("kD", 0).getEntry();
+    // PIDSpeedValue = tab.addPersistent("PID Speed", 0).getEntry();
   }
 
   public void pidTest() {
-    SmartDashboard.putNumber("Average Encoder Value", getAverageEncoder());
+    // SmartDashboard.putNumber("Average Encoder Value", getAverageEncoder()/Constants.kEncoder2Feet);
+
     //Attempts to drive 6 ft with tolerance of 1 ft
 
     //**Tuning PID**
@@ -97,39 +101,63 @@ public class DriveSubsystem extends SubsystemBase {
     //Finally, increase I until it is able to home into the desired target position
 
     //Not sure if this is bad but if so, then just use the commented out version insead and reboot code :(
-    PID.setPID(kPEntry.getDouble(0),kIEntry.getDouble(0),kDEntry.getDouble(0));
+    // PID.setPID(kPEntry.getDouble(0),kIEntry.getDouble(0),kDEntry.getDouble(0));
     //PID.setPID(kp,kI,kD);
     
-    double PIDSpeed = PID.calculate(getAverageEncoder()/Constants.kEncoder2Feet); //Using the 10 ft test for the encoder value to feet conversion
-    
+    // double PIDSpeed = MathUtil.clamp(PID.calculate(getAverageEncoder()/Constants.kEncoder2Feet),-0.75,0.75); //Using the 10 ft test for the encoder value to feet conversion
+    // PIDSpeedValue.setDouble(PIDSpeed);
     //Moves foward when xButton pressed, backwards when yButton pressed.
-    rightGroup.set(-PIDSpeed);
-    leftGroup.set(PIDSpeed);
+    // rightGroup.set(-PIDSpeed);
+    // leftGroup.set(PIDSpeed);
   }
 
-  public void pidTestStart(boolean xButton,boolean yButton) {
-    if(xButton) {
-      PID.setSetpoint(6);
-    }
-    else if(yButton) {
-      PID.setSetpoint(0);
-    }
-  }
-
-
-
-
+  // public void pidTestStart(boolean xButton,boolean yButton) {
+  //   if(xButton) {
+  //     PID.setSetpoint(6);
+  //   }
+  //   else if(yButton) {
+  //     zeroEncoder();
+  //     PID.setSetpoint(0);
+  //   }
+  // }
 
   public void drive(double leftY, double rightY, double analogRead) 
   {
     if(rightY > 0.05 || rightY < -0.05 || leftY > 0.05 || leftY < -0.05){
-      rightGroup.set(0.75 * (rightY * (0.50 - (0.25 * analogRead))) );
-      leftGroup.set(0.75 * (-leftY * (0.50 - (0.25 * analogRead))) ); 
+      rightGroup.set(0.85 * (rightY * (0.50 - (0.25 * analogRead))) );
+      leftGroup.set(0.85 * (-leftY * (0.50 - (0.25 * analogRead))) ); 
     }
     else{
       stop();
     }
   }
+
+  // public void brakeMode(boolean b1){
+  //   if(b1){
+  //     motorR1.setIdleMode(IdleMode.kBrake);
+  //     motorR2.setIdleMode(IdleMode.kBrake);
+  //     motorL1.setIdleMode(IdleMode.kBrake);
+  //     motorL2.setIdleMode(IdleMode.kBrake);
+    
+  //    motorR1.burnFlash();
+  //    motorR2.burnFlash();
+  //    motorL1.burnFlash();
+  //    motorL2.burnFlash();
+  //   }
+  // }
+  // public void coastMode(boolean b2){
+  //    if(b2) {
+  //   motorR1.setIdleMode(IdleMode.kBrake);
+  //   motorR2.setIdleMode(IdleMode.kBrake);
+  //   motorL1.setIdleMode(IdleMode.kBrake);
+  //   motorL2.setIdleMode(IdleMode.kBrake);
+    
+  //   motorR1.burnFlash();
+  //   motorR2.burnFlash();
+  //   motorL1.burnFlash();
+  //   motorL2.burnFlash();
+  //  }
+  // }
 
   public void autonomousDrive(double speed, double target) {
     error = target - gyro.getAngle();
